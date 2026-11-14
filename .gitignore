@@ -53,3 +53,7 @@ supabase/.branches/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated demo imagery (rebuilt with npm run images:build)
+/seed-assets/generated/
+/public/seed/
