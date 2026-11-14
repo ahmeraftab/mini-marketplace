@@ -56,45 +56,13 @@ export function Gallery({ images, title, tint, colourName }: Props) {
   }
 
   return (
-    <div className="lg:grid lg:grid-cols-[84px_1fr] lg:gap-4">
-      {/* thumbnails: vertical rail on large screens, strip below on small ones */}
-      <ul
-        className="scrollbar-none -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:order-first lg:m-0 lg:max-h-[640px] lg:flex-col lg:overflow-y-auto lg:overflow-x-visible lg:p-0"
-        aria-label="Photo thumbnails"
-      >
-        {images.map((img, i) => (
-          <li key={img.id} className="shrink-0 lg:w-full">
-            <button
-              type="button"
-              onClick={() => goTo(i)}
-              aria-label={`Show photo ${i + 1} of ${count}`}
-              aria-current={i === selected}
-              className={cn(
-                "relative block size-14 overflow-hidden rounded-[3px] border-2 transition-[border-color,opacity] duration-200 lg:size-auto lg:aspect-[4/3] lg:w-full",
-                i === selected ? "border-ink" : "border-transparent opacity-70 hover:opacity-100",
-              )}
-            >
-              <Image
-                src={imageUrl(img.path)}
-                alt=""
-                fill
-                sizes="84px"
-                className="object-cover"
-              />
-              {tint && img.colourId === null && (
-                <span className="absolute inset-0 mix-blend-multiply" style={{ backgroundColor: tint }} aria-hidden="true" />
-              )}
-            </button>
-          </li>
-        ))}
-      </ul>
-
+    <div className="min-w-0 lg:grid lg:grid-cols-[84px_minmax(0,1fr)] lg:gap-4">
       <motion.div
         // the whole gallery fades in whenever the colour (and so the photo set) changes
         initial={{ opacity: 0.15 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="relative -mx-4 sm:-mx-6 lg:mx-0"
+        className="relative -mx-4 min-w-0 sm:-mx-6 lg:order-2 lg:mx-0"
       >
         <div ref={emblaRef} className="overflow-hidden lg:rounded-card" aria-roledescription="carousel" aria-label={`${title} photos`}>
           <div className="flex touch-pan-y">
@@ -171,6 +139,38 @@ export function Gallery({ images, title, tint, colourName }: Props) {
           </>
         )}
       </motion.div>
+
+      {/* thumbnails: vertical rail on large screens, strip below on small ones */}
+      <ul
+        className="scrollbar-none -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:order-1 lg:m-0 lg:max-h-[640px] lg:flex-col lg:overflow-y-auto lg:overflow-x-visible lg:p-0"
+        aria-label="Photo thumbnails"
+      >
+        {images.map((img, i) => (
+          <li key={img.id} className="shrink-0 lg:w-full">
+            <button
+              type="button"
+              onClick={() => goTo(i)}
+              aria-label={`Show photo ${i + 1} of ${count}`}
+              aria-current={i === selected}
+              className={cn(
+                "relative block size-14 overflow-hidden rounded-[3px] border-2 transition-[border-color,opacity] duration-200 lg:size-auto lg:aspect-[4/3] lg:w-full",
+                i === selected ? "border-ink" : "border-transparent opacity-70 hover:opacity-100",
+              )}
+            >
+              <Image
+                src={imageUrl(img.path)}
+                alt=""
+                fill
+                sizes="84px"
+                className="object-cover"
+              />
+              {tint && img.colourId === null && (
+                <span className="absolute inset-0 mix-blend-multiply" style={{ backgroundColor: tint }} aria-hidden="true" />
+              )}
+            </button>
+          </li>
+        ))}
+      </ul>
 
       {lightboxOpen && (
         <ProductLightbox slides={slides} index={selected} open={lightboxOpen} onClose={() => setLightboxOpen(false)} />

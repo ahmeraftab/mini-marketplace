@@ -34,7 +34,7 @@ export type OptionGroup = {
 export type Addon = { id: string; label: string; pricePence: number; position: number };
 
 /** Everything the product page and the seller form need. Structurally a PricingProduct. */
-export type ProductDetail = PricingProduct & {
+export type ProductDetail = Omit<PricingProduct, "groups" | "addons"> & {
   id: string;
   slug: string;
   title: string;
