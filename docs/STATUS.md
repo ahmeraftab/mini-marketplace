@@ -13,7 +13,7 @@
 ## Simplified or incomplete
 
 - The basket lives on the device (localStorage). It is not synced between devices.
-- Demo photos are drawn illustrations tinted per colour, not photographs.
+- Demo photos are real Unsplash photos (credited in the README) cropped into six views and colour-graded per swatch, so the colour change is approximate, not the true fabric.
 - A new listing needs admin approval before buyers see it (assumed; see the plan's questions).
 - Photos of deleted listings stay in storage; a clean-up job is not written.
 - The full buyer → seller → admin flow test (`tests/e2e/flow.spec.ts`) is not written; `npm run verify:rls` and manual testing cover it.

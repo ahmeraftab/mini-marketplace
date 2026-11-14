@@ -57,7 +57,7 @@ In Supabase, turn **off** "Confirm email" (Authentication → Providers → Emai
 | `npm run db:push` | apply migrations |
 | `npm run seed:base` / `seed:demo` / `seed:reset` | demo data |
 | `npm run verify:rls` | signs in as each role against the real database and checks what each may do |
-| `npm run images:build` / `icons:build` | regenerate the demo illustrations / PWA icons |
+| `npm run images:build` / `icons:build` | regenerate the demo illustrations (fallback) / PWA icons; `photos:build` renders the per-colour photo sets |
 
 ## How it works
 
@@ -97,4 +97,11 @@ Not done, on purpose: real payments, emails (including confirmation and password
 
 ## Image credits
 
-The demo bed pictures are illustrations drawn by `scripts/lib/illustrate.ts`, one set per colour. No third-party photos are used. To use real photos, put them in `seed-assets/override/<colour-slug>/1.jpg … 6.jpg` and run `npm run seed:reset`.
+The demo bed pictures are cropped and colour-graded from four free Unsplash photos (Unsplash License, no attribution required; credited here anyway), one set of six per colour, built by `scripts/build-seed-photos.ts`:
+
+- Sibeli Velázquez: https://unsplash.com/photos/1741308478100-85c440e1b4bf
+- Clay Banks: https://unsplash.com/photos/1757418254008-1647eb0afe04
+- mark champs: https://unsplash.com/photos/1566665797739-1674de7a421a
+- Bree Anne: https://unsplash.com/photos/1639690222445-595b0794bbd4
+
+The colour change is a demo grade, not the real fabric. To use your own photos, put them in `seed-assets/override/<colour-slug>/1.jpg … 6.jpg` and run `npm run seed:reset`. `scripts/build-seed-images.ts` remains as a drawn-illustration fallback.

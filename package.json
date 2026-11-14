@@ -16,6 +16,7 @@
     "seed:reset": "tsx --env-file=.env.local --experimental-websocket scripts/seed.ts reset",
     "verify:rls": "tsx --env-file=.env.local --experimental-websocket scripts/verify-rls.ts",
     "images:build": "tsx scripts/build-seed-images.ts",
+    "photos:build": "tsx scripts/build-seed-photos.ts",
     "icons:build": "tsx scripts/generate-icons.ts",
     "test:db": "node --import tsx --test tests/db/database.test.ts"
   },

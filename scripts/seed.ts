@@ -17,6 +17,7 @@ import { PRAGUE } from "../src/lib/demo/prague";
 import { slugify } from "../src/lib/format";
 import { newId } from "../src/lib/ids";
 import { buildImages } from "./build-seed-images";
+import { buildPhotos } from "./build-seed-photos";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishable = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -100,7 +101,8 @@ async function seedDemo() {
   // illustrations (or the owner's own photos under seed-assets/override/)
   if (!existsSync(path.join(process.cwd(), "seed-assets", "generated", slugify(PRAGUE.colours[0].name), "1.jpg"))) {
     console.log("rendering demo images...");
-    await buildImages();
+    if (existsSync(path.join(process.cwd(), "seed-assets", "source", "src1.jpg"))) await buildPhotos();
+    else await buildImages();
   }
 
   const payload = buildPraguePayload({ sellerId: ids.seller, categoryId, newId, submit: true });
