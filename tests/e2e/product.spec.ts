@@ -85,6 +85,20 @@ test.describe("product page", () => {
     }
   });
 
+  test("the gallery swipes to the next photo (phone)", async ({ page }, info) => {
+    test.skip(!info.project.name.startsWith("mobile"), "phone layout only");
+    await page.goto(PATH);
+    const counter = page.getByText(/^1 \/ \d+$/).first();
+    await expect(counter).toBeVisible();
+    const box = (await page.locator('[aria-roledescription="carousel"]').first().boundingBox())!;
+    const y = box.y + box.height / 2;
+    await page.mouse.move(box.x + box.width * 0.8, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.2, y, { steps: 12 });
+    await page.mouse.up();
+    await expect(page.getByText(/^2 \/ \d+$/).first()).toBeVisible();
+  });
+
   test("the Add to Basket bar stays on screen while scrolling (phone)", async ({ page }, info) => {
     test.skip(!info.project.name.startsWith("mobile"), "phone layout only");
     await page.goto(PATH);

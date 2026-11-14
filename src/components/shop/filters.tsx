@@ -52,7 +52,8 @@ function Panel({
     <div className="space-y-8">
       <section aria-labelledby="f-cat">
         <h3 id="f-cat" className="mb-3 text-[15px] font-semibold">Category</h3>
-        <ul className="space-y-1" role="radiogroup" aria-labelledby="f-cat">
+        <div role="radiogroup" aria-labelledby="f-cat">
+        <ul className="space-y-1">
           <li>
             <CheckRow label="All" checked={!draft.category} onClick={() => onChange({ ...draft, category: null })} radio />
           </li>
@@ -69,6 +70,7 @@ function Panel({
             </li>
           ))}
         </ul>
+        </div>
       </section>
 
       {facets.colours.length > 0 && (
