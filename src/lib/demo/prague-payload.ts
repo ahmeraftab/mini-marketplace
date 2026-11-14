@@ -1,3 +1,4 @@
+import type { SaveProductPayload } from "@/lib/catalog/payload";
 import { PRAGUE, titleForColour } from "./prague";
 
 /**
@@ -13,7 +14,7 @@ export function buildPraguePayload(opts: {
   submit?: boolean;
   /** photos per colour; defaults to 6 (the brief asks for at least 5) */
   imagesPerColour?: number;
-}) {
+}): SaveProductPayload {
   const productId = opts.productId ?? opts.newId();
   const perColour = opts.imagesPerColour ?? 6;
 

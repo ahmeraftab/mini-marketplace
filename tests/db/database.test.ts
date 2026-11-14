@@ -7,6 +7,7 @@
  */
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
+import type { SaveProductPayload } from "../../src/lib/catalog/payload";
 import { newId } from "../../src/lib/ids";
 import { buildPraguePayload } from "../../src/lib/demo/prague-payload";
 import { anon, as, createDb, service, signUp, user, type Db } from "./harness";
@@ -23,7 +24,7 @@ let db: Db;
 let productA: string;
 let productB: string;
 
-type Payload = ReturnType<typeof buildPraguePayload>;
+type Payload = SaveProductPayload;
 const prague = (sellerId: string, extra: Partial<Parameters<typeof buildPraguePayload>[0]> = {}) =>
   buildPraguePayload({ sellerId, categoryId: CATEGORY_CHILD, newId, ...extra });
 const clone = <T,>(v: T): T => structuredClone(v);

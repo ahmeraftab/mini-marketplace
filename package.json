@@ -11,7 +11,6 @@
     "test": "node --import tsx --test tests/unit/pricing.test.ts tests/unit/money-and-keys.test.ts",
     "test:e2e": "playwright test",
     "db:push": "tsx --env-file=.env.local scripts/db-push.ts",
-    "db:types": "tsx --env-file=.env.local scripts/db-types.ts",
     "seed:base": "tsx --env-file=.env.local scripts/seed.ts base",
     "seed:demo": "tsx --env-file=.env.local scripts/seed.ts demo",
     "seed:reset": "tsx --env-file=.env.local scripts/seed.ts reset",
