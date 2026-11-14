@@ -42,11 +42,16 @@ export async function deleteProduct(id: unknown): Promise<ActionResult> {
   const parsed = z.uuid().safeParse(id);
   if (!parsed.success) return fail("VALIDATION", "That listing could not be found.");
   const supabase = await createClient();
+  // remember the photo paths first: the rows go with the listing
+  const { data: photos } = await supabase.from("product_images").select("storage_path").eq("product_id", parsed.data);
   const { error } = await supabase.rpc("delete_product", { p_id: parsed.data });
   if (error) {
     const e = parseDbError(error);
     return fail(e.code, e.message);
   }
+  // tidy up the files; a failure here must not undo the delete
+  const paths = (photos ?? []).map((p) => p.storage_path).filter(Boolean);
+  if (paths.length) await supabase.storage.from("product-images").remove(paths).catch(() => null);
   revalidatePath("/seller");
   revalidatePath("/products");
   return succeed(undefined);

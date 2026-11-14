@@ -10,7 +10,9 @@ import { cn } from "@/lib/cn";
 type Role = "buyer" | "seller" | "admin" | null;
 
 /** Pages that carry their own fixed bottom action bar: the tab bar steps aside. */
-const HIDE_ON = [/^\/products\/[^/]+/, /^\/cart/, /^\/checkout/, /^\/seller/, /^\/admin/, /^\/login/, /^\/signup/];
+const HIDE_ON = [/^\/products\/[^/]+/, /^\/seller/, /^\/admin/, /^\/login/, /^\/signup/];
+/** These show a bottom action bar only while the basket has something in it. */
+const HIDE_WHEN_BASKET_HAS_ITEMS = [/^\/cart/, /^\/checkout/];
 
 export function MobileTabBar({ role }: { role: Role }) {
   const pathname = usePathname();
@@ -18,6 +20,9 @@ export function MobileTabBar({ role }: { role: Role }) {
   const count = useCart((s) => cartCount(s.lines));
 
   if (HIDE_ON.some((re) => re.test(pathname))) return null;
+  if (!hydrated || count > 0) {
+    if (HIDE_WHEN_BASKET_HAS_ITEMS.some((re) => re.test(pathname))) return null;
+  }
 
   const tabs = [
     { href: "/", label: "Home", icon: Home, match: (p: string) => p === "/" },

@@ -63,7 +63,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <main id="main" className="flex-1 pb-[calc(var(--tabbar-h)+env(safe-area-inset-bottom))] md:pb-0">
             {children}
           </main>
-          <Footer />
+          <Footer signedIn={!!session} />
           {session?.role === "buyer" && <OrderStatusListener userId={session.id} />}
           <MobileTabBar role={session?.role ?? null} />
         </Providers>

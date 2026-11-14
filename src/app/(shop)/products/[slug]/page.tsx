@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BackLink } from "@/components/layout/back-link";
 import { notFound } from "next/navigation";
 import { ProductConfigurator } from "@/components/product/configurator";
 import { getProductBySlug } from "@/lib/catalog/queries";
@@ -37,7 +38,8 @@ export default async function ProductPage(props: Props) {
 
   return (
     <div className="mx-auto max-w-[1320px] px-4 pb-40 pt-5 sm:px-6 lg:pb-20 lg:pt-8">
-      <nav aria-label="Breadcrumb" className="mb-5 text-sm text-ink-muted">
+      <BackLink href="/products" label="All beds" className="md:hidden" />
+      <nav aria-label="Breadcrumb" className="mb-5 hidden text-sm text-ink-muted md:block">
         <ol className="flex flex-wrap items-center gap-x-2">
           <li><Link href="/products" className="hover:text-ink">Shop</Link></li>
           <li aria-hidden="true">/</li>

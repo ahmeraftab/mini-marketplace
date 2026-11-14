@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 
-export function Footer() {
+export function Footer({ signedIn = false }: { signedIn?: boolean }) {
   return (
     <footer className="mt-24 border-t border-line bg-paper-deep">
       <div className="mx-auto grid max-w-[1320px] gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8">
@@ -24,7 +24,7 @@ export function Footer() {
           links={[
             ["Open a shop", "/signup?role=seller"],
             ["Seller hub", "/seller"],
-            ["Log in", "/login"],
+            signedIn ? ["Your account", "/account"] : ["Log in", "/login"],
           ]}
         />
         <FooterColumn

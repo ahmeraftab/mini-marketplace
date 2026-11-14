@@ -2,6 +2,7 @@ import { ArrowRight, Layers, PackageCheck, Ruler } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/shop/reveal";
+import { FeaturedProduct } from "@/components/shop/featured-product";
 import { ProductCard } from "@/components/shop/product-card";
 import { Button } from "@/components/ui/button";
 import { getFeaturedProducts } from "@/lib/catalog/queries";
@@ -74,7 +75,15 @@ export default async function HomePage() {
           <h2 className="font-display text-3xl tracking-tight sm:text-4xl">On the shop floor</h2>
           <Link href="/products" className="text-[15px] underline underline-offset-4 hover:text-clay">See everything</Link>
         </div>
-        {featured.length ? (
+        {featured.length > 0 && featured.length < 3 ? (
+          <div className="space-y-16">
+            {featured.map((p) => (
+              <Reveal key={p.id}>
+                <FeaturedProduct product={p} />
+              </Reveal>
+            ))}
+          </div>
+        ) : featured.length ? (
           <ul className="grid grid-cols-1 gap-x-6 gap-y-12 min-[480px]:grid-cols-2 lg:grid-cols-4">
             {featured.map((p, i) => (
               <Reveal key={p.id} as="li" delay={i * 0.06}>
