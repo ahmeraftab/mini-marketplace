@@ -2,7 +2,7 @@
 
 import { Check, SlidersHorizontal, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import { browseToSearch, hasActiveFilters, emptyBrowse, type BrowseParams } from "@/lib/catalog/browse";
@@ -24,10 +24,12 @@ function Panel({
 }) {
   const [min, setMin] = useState(draft.minPence != null ? penceToInput(draft.minPence) : "");
   const [max, setMax] = useState(draft.maxPence != null ? penceToInput(draft.maxPence) : "");
-  useEffect(() => {
+  const [seen, setSeen] = useState(`${draft.minPence}|${draft.maxPence}`);
+  if (seen !== `${draft.minPence}|${draft.maxPence}`) {
+    setSeen(`${draft.minPence}|${draft.maxPence}`);
     setMin(draft.minPence != null ? penceToInput(draft.minPence) : "");
     setMax(draft.maxPence != null ? penceToInput(draft.maxPence) : "");
-  }, [draft.minPence, draft.maxPence]);
+  }
 
   const minBad = min.trim() !== "" && parsePounds(min) == null;
   const maxBad = max.trim() !== "" && parsePounds(max) == null;
@@ -173,7 +175,11 @@ export function Filters({ params, facets }: { params: BrowseParams; facets: Face
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(params);
 
-  useEffect(() => setDraft(params), [params]);
+  const [seenParams, setSeenParams] = useState(params);
+  if (params !== seenParams) {
+    setSeenParams(params);
+    setDraft(params);
+  }
 
   const apply = (next: BrowseParams) =>
     startTransition(() => router.replace(`${pathname}${browseToSearch(next)}`, { scroll: false }));

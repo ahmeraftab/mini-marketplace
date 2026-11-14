@@ -13,7 +13,12 @@ export function SearchBox({ initial }: { initial: string }) {
   const [, startTransition] = useTransition();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => setValue(initial), [initial]);
+  // follow the URL when it changes from elsewhere (chips, back button)
+  const [seen, setSeen] = useState(initial);
+  if (initial !== seen) {
+    setSeen(initial);
+    setValue(initial);
+  }
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
   function push(next: string) {
