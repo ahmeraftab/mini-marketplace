@@ -22,7 +22,7 @@ export default async function CheckoutPage() {
         <div className="max-w-xl rounded-card border border-line bg-surface p-8">
           <h2 className="font-display text-2xl">Sign in with a buyer account</h2>
           <p className="mt-2 text-ink-muted">
-            You are signed in as a {session.role}. Only buyer accounts can place orders, so log in with a buyer account
+            You are signed in as {session.role === "admin" ? "an admin" : `a ${session.role}`}. Only buyer accounts can place orders, so log in with a buyer account
             (the login page has a demo buyer) to continue.
           </p>
           <Button asChild className="mt-6"><Link href="/login?next=/checkout">Switch account</Link></Button>
