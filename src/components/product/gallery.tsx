@@ -20,7 +20,14 @@ type Props = {
   colourName: string;
 };
 
+/** True once any gallery has appeared in this tab: only LATER mounts (a colour change) fade in, so the first photo is never held back. */
+let galleryHasAppeared = false;
+
 export function Gallery({ images, title, tint, colourName }: Props) {
+  const [fadeIn] = useState(() => galleryHasAppeared);
+  useEffect(() => {
+    galleryHasAppeared = true;
+  }, []);
   const [emblaRef, embla] = useEmblaCarousel({ loop: false, align: "start", containScroll: "trimSnaps" });
   const [selected, setSelected] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -59,7 +66,7 @@ export function Gallery({ images, title, tint, colourName }: Props) {
     <div className="min-w-0 lg:grid lg:grid-cols-[84px_minmax(0,1fr)] lg:gap-4">
       <motion.div
         // the whole gallery fades in whenever the colour (and so the photo set) changes
-        initial={{ opacity: 0.15 }}
+        initial={fadeIn ? { opacity: 0.15 } : false}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="relative -mx-4 min-w-0 sm:-mx-6 lg:order-2 lg:mx-0"
@@ -78,7 +85,8 @@ export function Gallery({ images, title, tint, colourName }: Props) {
                   src={imageUrl(img.path)}
                   alt={img.alt || title}
                   fill
-                  priority={i === 0}
+                  preload={i === 0}
+                  fetchPriority={i === 0 ? "high" : "auto"}
                   sizes="(min-width: 1024px) 56vw, 100vw"
                   className="select-none object-cover"
                   draggable={false}

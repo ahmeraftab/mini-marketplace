@@ -4,7 +4,6 @@ import { BackLink } from "@/components/layout/back-link";
 import { notFound } from "next/navigation";
 import { ProductConfigurator } from "@/components/product/configurator";
 import { getProductBySlug } from "@/lib/catalog/queries";
-import { SITE_NAME } from "@/lib/site";
 
 type Props = PageProps<"/products/[slug]">;
 
@@ -26,7 +25,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   if (!product) return { title: "Not found" };
   const colour = pickColour(product, (await props.searchParams).colour);
   return {
-    title: `${colour.title} | ${SITE_NAME}`,
+    title: colour.title, // the layout template adds the site name
     description: product.description.slice(0, 160),
   };
 }

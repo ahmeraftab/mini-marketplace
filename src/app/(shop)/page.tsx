@@ -39,7 +39,7 @@ export default async function HomePage() {
         <div className="animate-fade relative lg:col-span-7">
           <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-paper-deep">
             {hero && (
-              <Image src={imageUrl(hero.path)} alt={hero.alt || "A divan bed"} fill priority sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover" />
+              <Image src={imageUrl(hero.path)} alt={hero.alt || "A divan bed"} fill preload fetchPriority="high" sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover" />
             )}
           </div>
           {room && (

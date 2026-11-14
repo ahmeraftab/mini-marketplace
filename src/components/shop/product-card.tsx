@@ -27,7 +27,7 @@ export function ProductCard({ product, colour, priority }: { product: Card; colo
               src={imageUrl(first.path)}
               alt={first.alt || chosen?.title || product.title}
               fill
-              priority={priority}
+              preload={priority}
               sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw"
               className="object-cover transition-[transform,opacity] duration-700 ease-out-expo group-hover:scale-[1.03]"
             />

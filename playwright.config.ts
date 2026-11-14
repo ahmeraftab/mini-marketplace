@@ -16,14 +16,14 @@ export default defineConfig({
   workers: 2,
   retries: 1,
   reporter: [["list"]],
-  use: { baseURL: process.env.FLOW_BASE_URL ?? `http://localhost:${port}`, trace: "retain-on-failure" },
+  use: { baseURL: process.env.FLOW_BASE_URL ?? process.env.PWA_BASE_URL ?? `http://localhost:${port}`, trace: "retain-on-failure" },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } } },
     { name: "mobile-360", use: { ...devices["Pixel 5"], viewport: { width: 360, height: 740 } } },
     // iPhone Safari engine; run it with: npx playwright install webkit
     { name: "mobile-webkit", use: { ...devices["iPhone 13"] }, testMatch: /product\.spec\.ts/ },
   ],
-  webServer: process.env.FLOW_BASE_URL ? undefined : {
+  webServer: process.env.FLOW_BASE_URL || process.env.PWA_BASE_URL ? undefined : {
     command: `npx next dev -p ${port}`,
     url: `http://localhost:${port}`,
     reuseExistingServer: true,
