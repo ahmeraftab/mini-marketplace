@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test tests/unit/pricing.test.ts tests/unit/money-and-keys.test.ts",
+    "test": "node --import tsx --test tests/unit/pricing.test.ts tests/unit/money-and-keys.test.ts tests/unit/seller-form.test.ts",
     "test:e2e": "playwright test",
     "db:push": "tsx --env-file=.env.local scripts/db-push.ts",
     "seed:base": "tsx --env-file=.env.local scripts/seed.ts base",
