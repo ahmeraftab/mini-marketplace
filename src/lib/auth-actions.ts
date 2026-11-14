@@ -6,6 +6,7 @@ import { fail, zodFieldErrors, type ActionResult } from "@/lib/action-result";
 import { homeFor, type Role } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { safeNextPath } from "@/lib/format";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 const emailSchema = z.string().trim().toLowerCase().pipe(z.email("Enter a valid email address"));
@@ -27,6 +28,12 @@ const signUpSchema = z
     path: ["shopName"],
     message: "Enter a shop name",
   });
+
+/** Where to go after signing in: a safe `next` link if there is one, otherwise the role's own home (the form's default "/" does not count). */
+function landingPath(next: FormDataEntryValue | null, home: string): string {
+  if (typeof next !== "string" || next === "/" || next === "") return home;
+  return safeNextPath(next, home);
+}
 
 function friendlyAuthError(message: string): string {
   const m = message.toLowerCase();
@@ -58,8 +65,7 @@ export async function signInAction(_prev: ActionResult | null, formData: FormDat
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
   const role = (profile?.role ?? "buyer") as Role;
-  const next = formData.get("next");
-  redirect(safeNextPath(typeof next === "string" ? next : null, homeFor(role)));
+  redirect(landingPath(formData.get("next"), homeFor(role)));
 }
 
 export async function signUpAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
@@ -76,28 +82,24 @@ export async function signUpAction(_prev: ActionResult | null, formData: FormDat
   }
   const v = parsed.data;
 
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
+  // The demo sends no emails, so the account is created already confirmed (server side,
+  // with the service role) and the person is signed straight in. This does not depend on the
+  // project's "Confirm email" setting or its small built-in mail quota.
+  const admin = createAdminClient();
+  const created = await admin.auth.admin.createUser({
     email: v.email,
     password: v.password,
-    options: {
-      // the database trigger only honours "seller"; anything else becomes a buyer
-      data: { role: v.role, full_name: v.fullName, shop_name: v.role === "seller" ? v.shopName : undefined },
-    },
+    email_confirm: true,
+    // the database trigger only honours "seller"; anything else becomes a buyer
+    user_metadata: { role: v.role, full_name: v.fullName, shop_name: v.role === "seller" ? v.shopName : undefined },
   });
-  if (error) return fail("AUTH", friendlyAuthError(error.message));
+  if (created.error) return fail("AUTH", friendlyAuthError(created.error.message));
 
-  // Email confirmation switched on in Supabase: there is no session yet.
-  if (!data.session) {
-    return {
-      ok: true,
-      data: undefined,
-      message: "Account created. Check your email to confirm it, then log in.",
-    };
-  }
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({ email: v.email, password: v.password });
+  if (error) return fail("AUTH", "Your account was created. Please log in.");
 
-  const next = formData.get("next");
-  redirect(safeNextPath(typeof next === "string" ? next : null, homeFor(v.role)));
+  redirect(landingPath(formData.get("next"), homeFor(v.role)));
 }
 
 export async function signOutAction(): Promise<void> {

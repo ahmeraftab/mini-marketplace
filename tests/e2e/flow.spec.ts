@@ -67,6 +67,8 @@ test("buyer configures, orders; seller moves the status; buyer sees it", async (
     await expect(seller.page.getByTestId("next-status")).toHaveText(`Mark as ${step}`);
     await seller.page.getByTestId("next-status").click();
     await expect(seller.page.getByText(`Marked as ${step}`).first()).toBeVisible({ timeout: 15_000 });
+    // the buyer's open page hears about it live (Realtime), without a reload
+    await expect(p.getByText(/Order MM-[0-9]+ is now /).filter({ hasText: step }).first()).toBeVisible({ timeout: 30_000 });
   }
   await seller.ctx.close();
 
