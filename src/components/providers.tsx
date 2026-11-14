@@ -32,10 +32,21 @@ function CartHydrator() {
   return null;
 }
 
+/** Registers the small service worker (production only; see public/sw.js). */
+function ServiceWorker() {
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
+  return null;
+}
+
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <MotionConfig reducedMotion="user">
       <CartHydrator />
+      <ServiceWorker />
       {children}
       <Toaster
         position="top-center"
