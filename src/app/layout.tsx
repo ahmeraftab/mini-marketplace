@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Instrument_Sans } from "next/font/google";
 import "./globals.css";
+import { OrderStatusListener } from "@/components/orders/order-status-listener";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
@@ -63,6 +64,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
           <Footer />
+          {session?.role === "buyer" && <OrderStatusListener userId={session.id} />}
           <MobileTabBar role={session?.role ?? null} />
         </Providers>
       </body>
