@@ -38,12 +38,12 @@ Requires Node 20+ (Node 22 recommended).
 | `SUPABASE_SECRET_KEY` | server only | service-role key, used for checkout and seeding |
 | `SUPABASE_DB_URL` | your machine only | session-pooler connection string for `db:push`; never set on Vercel |
 | `GEMINI_API_KEY` | server only | optional; enables "Describe with AI" |
-| `GEMINI_MODEL` | server only | optional; default `gemini-3.5-flash-lite` |
+| `GEMINI_MODEL` | server only | optional; default `gemini-3.5-flash-lite` (older names such as `gemini-2.5-flash` are no longer served to new keys) |
 | `NEXT_PUBLIC_SITE_URL` | browser | canonical URL |
 
 Keys live only in environment variables. `.env*` files (except `.env.example`) are git-ignored.
 
-In Supabase, turn **off** "Confirm email" (Authentication → Providers → Email) because the demo sends no emails.
+The demo sends no emails: sign-up creates the account already confirmed (on the server, with the service key) and signs the person straight in, so it works whatever the project's "Confirm email" setting is.
 
 ### Scripts
 
@@ -53,11 +53,13 @@ In Supabase, turn **off** "Confirm email" (Authentication → Providers → Emai
 | `npm run typecheck` / `lint` | static checks |
 | `npm test` | 52 unit tests (pricing, money, cart keys, seller form) |
 | `npm run test:db` | 46 database tests: the real migrations run on an in-process Postgres with a role shim |
-| `npm run test:e2e` | Playwright at 1280px and 360px (price table, swatches, tap sizes, no sideways scroll) |
+| `npm run test:e2e` | Playwright against the built-in preview data: price table, swatches, tap sizes, no sideways scroll, gallery swipe, at 1280px, 360px and iPhone Safari (WebKit; `npx playwright install webkit` once) |
+| live tests | against a seeded project: `FLOW_BASE_URL=http://localhost:3000 npx playwright test flow seller-form a11y` runs the whole buyer → seller → admin flow (also at 360px), a new seller building a listing through the real form, the live "status changed" message, and an accessibility scan (axe). All temporary data is called `TEST` and removed. |
+| PWA test | `npm run build && npx next start -p 3200`, then `PWA_BASE_URL=http://localhost:3200 npx playwright test pwa --project=desktop` (manifest, icons, service worker, offline page) |
 | `npm run db:push` | apply migrations |
 | `npm run seed:base` / `seed:demo` / `seed:reset` | demo data |
 | `npm run verify:rls` | signs in as each role against the real database and checks what each may do |
-| `npm run images:build` / `icons:build` | regenerate the demo illustrations (fallback) / PWA icons; `photos:build` renders the per-colour photo sets |
+| `npm run photos:build` / `icons:build` | render the per-colour demo photo sets / the PWA icons (`images:build` is the drawn-illustration fallback) |
 
 ## How it works
 
@@ -104,4 +106,4 @@ The demo bed pictures are cropped and colour-graded from four free Unsplash phot
 - mark champs: https://unsplash.com/photos/1566665797739-1674de7a421a
 - Bree Anne: https://unsplash.com/photos/1639690222445-595b0794bbd4
 
-The colour change is a demo grade, not the real fabric. To use your own photos, put them in `seed-assets/override/<colour-slug>/1.jpg … 6.jpg` and run `npm run seed:reset`. `scripts/build-seed-images.ts` remains as a drawn-illustration fallback.
+Only the upholstery is recoloured (hand-marked areas per photo, light and stitching kept), so the swatch changes the bed while the room stays as photographed; it is a demo grade, not the real fabric. To use your own photos, put them in `seed-assets/override/<colour-slug>/1.jpg … 6.jpg` and run `npm run seed:reset`. `scripts/build-seed-images.ts` remains as a drawn-illustration fallback.

@@ -40,7 +40,8 @@ test("buyer configures, orders; seller moves the status; buyer sees it", async (
   await p.getByRole("radio", { name: /2 Drawers Foot End/ }).click();
   await p.locator("label", { hasText: "Professional Assembly" }).click();
   await expect(p.locator('[aria-live="polite"][aria-atomic="true"]').first()).toHaveText("£589.98");
-  await p.getByTestId("add-to-basket-desktop").click();
+  // desktop has the button in the options column, phones have it in the sticky bar
+  await p.locator('[data-testid="add-to-basket-desktop"]:visible, [data-testid="add-to-basket"]:visible').first().click();
   await p.getByRole("link", { name: "View basket" }).click();
   await expect(p.getByTestId("cart-line")).toHaveCount(1);
   await expect(p.getByTestId("cart-total")).toHaveText("£589.98");
@@ -50,7 +51,7 @@ test("buyer configures, orders; seller moves the status; buyer sees it", async (
   await p.getByLabel(/^Address \*/).fill("1 Sample Street");
   await p.getByLabel(/Town or city/).fill("London");
   await p.getByLabel(/Postcode/).fill("SW1A 1AA");
-  await p.getByTestId("place-order").click();
+  await p.locator('[data-testid="place-order"]:visible, [data-testid="place-order-mobile"]:visible').first().click();
   await expect(p).toHaveURL(/checkout\/success/, { timeout: 30_000 });
   await expect(p.getByTestId("order-numbers")).toContainText("MM-");
 

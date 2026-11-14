@@ -130,7 +130,7 @@ test("approving the listing shows it to a guest; editing the price shows the new
   const guest = await (await browser.newContext()).newPage();
   await guest.goto(`${base}/products?q=${encodeURIComponent(title)}`);
   await expect(guest.getByRole("heading", { name: title }).first()).toBeVisible();
-  await expect(guest.getByText("£199.50").first()).toBeVisible();
+  await expect(guest.locator("article").filter({ hasText: title }).getByText("£199.50")).toBeVisible();
 
   const seller = await as(browser, email);
   await seller.page.goto(`${base}/seller`);
@@ -141,7 +141,7 @@ test("approving the listing shows it to a guest; editing the price shows the new
   await seller.ctx.close();
 
   await guest.goto(`${base}/products?q=${encodeURIComponent(title)}`);
-  await expect(guest.getByText("£189.50").first()).toBeVisible();
+  await expect(guest.locator("article").filter({ hasText: title }).getByText("£189.50")).toBeVisible();
 });
 
 test("hiding the shop removes its listing from the shop; approving brings it back", async ({ browser }) => {
