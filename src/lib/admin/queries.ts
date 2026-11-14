@@ -25,7 +25,7 @@ const order = { pending: 0, draft: 3, approved: 1, hidden: 2 } as const;
 export async function getAdminData(): Promise<{ sellers: AdminSeller[]; listings: AdminListing[] }> {
   const supabase = await createClient();
   const [sellersRes, listingsRes] = await Promise.all([
-    supabase.from("sellers").select("id, shop_name, status, created_at, profiles ( email )").order("created_at", { ascending: false }),
+    supabase.from("sellers").select("id, shop_name, status, created_at, profiles!sellers_id_fkey ( email )").order("created_at", { ascending: false }),
     supabase
       .from("products")
       .select("id, slug, title, base_price_pence, status, seller_id, sellers ( shop_name ), product_images ( storage_path, position )")

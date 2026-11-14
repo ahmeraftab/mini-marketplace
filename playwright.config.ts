@@ -11,6 +11,7 @@ const port = 3100;
 export default defineConfig({
   testDir: "tests/e2e",
   timeout: 60_000,
+  expect: { timeout: process.env.FLOW_BASE_URL ? 30_000 : 5_000 },
   fullyParallel: true,
   workers: 2,
   retries: 1,
@@ -20,7 +21,7 @@ export default defineConfig({
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } } },
     { name: "mobile-360", use: { ...devices["Pixel 5"], viewport: { width: 360, height: 740 } } },
   ],
-  webServer: {
+  webServer: process.env.FLOW_BASE_URL ? undefined : {
     command: `npx next dev -p ${port}`,
     url: `http://localhost:${port}`,
     reuseExistingServer: true,
