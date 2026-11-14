@@ -2,6 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
+import { FIXTURES_ENABLED, fixtureProduct } from "@/lib/catalog/fixtures";
+import { cookies } from "next/headers";
 
 export type Role = "buyer" | "seller" | "admin";
 
@@ -19,6 +21,20 @@ export type SessionProfile = {
  * Cached per request so layouts and pages can all call it cheaply.
  */
 export const getSessionProfile = cache(async (): Promise<SessionProfile | null> => {
+  if (FIXTURES_ENABLED()) {
+    // development preview only (MM_FIXTURES=1): pick a role with the mm_fixture_role cookie
+    const role = (await cookies()).get("mm_fixture_role")?.value;
+    if (role === "seller" || role === "buyer" || role === "admin") {
+      return {
+        id: fixtureProduct().sellerId,
+        role,
+        fullName: "Preview User",
+        email: "preview@example.com",
+        seller: role === "seller" ? { shopName: "Demo Seller", status: "approved" } : null,
+      };
+    }
+    return null;
+  }
   if (!isSupabaseConfigured()) return null;
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();

@@ -149,3 +149,17 @@ export async function getSellerListings(sellerId: string): Promise<Array<Product
     status: row.status,
   }));
 }
+
+/** Every category (the seller form's picker), parents first. */
+export async function getAllCategories(): Promise<Facets["categories"]> {
+  if (FIXTURES_ENABLED()) return fixtureFacets().categories;
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("categories").select("id, name, slug, parent_id, position").order("position");
+  if (error) throw new Error(`Could not load categories: ${error.message}`);
+  return ((data ?? []) as Array<{ id: string; name: string; slug: string; parent_id: string | null }>).map((c) => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+    parentId: c.parent_id,
+  }));
+}
