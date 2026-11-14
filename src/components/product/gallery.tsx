@@ -153,7 +153,7 @@ export function Gallery({ images, title, tint, colourName }: Props) {
               aria-label={`Show photo ${i + 1} of ${count}`}
               aria-current={i === selected}
               className={cn(
-                "relative block size-14 overflow-hidden rounded-[3px] border-2 transition-[border-color,opacity] duration-200 lg:size-auto lg:aspect-[4/3] lg:w-full",
+                "relative block size-14 overflow-hidden rounded-[3px] border-2 bg-paper-deep transition-[border-color,opacity] duration-200 lg:size-auto lg:aspect-[4/3] lg:w-full",
                 i === selected ? "border-ink" : "border-transparent opacity-70 hover:opacity-100",
               )}
             >
