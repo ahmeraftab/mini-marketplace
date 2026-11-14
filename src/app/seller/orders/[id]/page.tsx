@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { OrderItems } from "@/components/orders/order-items";
 import { OrderTimeline } from "@/components/orders/timeline";
 import { StatusControl } from "@/components/seller/status-control";
-import { getSessionProfile } from "@/lib/auth";
+import { requireSeller } from "@/lib/auth";
 import { formatDateTime } from "@/lib/format";
 import { isUuid } from "@/lib/ids";
 import { formatPence } from "@/lib/money";
@@ -15,10 +15,11 @@ export const metadata: Metadata = { title: "Order" };
 
 export default async function SellerOrderPage(props: PageProps<"/seller/orders/[id]">) {
   const { id } = await props.params;
-  const session = await getSessionProfile();
+  const session = await requireSeller("/seller/orders");
+  if (!session) return null;
   if (!isUuid(id)) notFound();
   const order = await getOrder(id);
-  if (!order || order.sellerId !== session!.id) notFound();
+  if (!order || order.sellerId !== session.id) notFound();
 
   return (
     <div>

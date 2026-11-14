@@ -1,4 +1,5 @@
 import "server-only";
+import { redirect } from "next/navigation";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -71,4 +72,15 @@ export function homeFor(role: Role): string {
   if (role === "seller") return "/seller";
   if (role === "admin") return "/admin";
   return "/";
+}
+
+/**
+ * Pages cannot rely on their layout's guard: Next renders a layout and its
+ * page in parallel. Guests are sent to log in; a signed-in non-seller gets
+ * null (the layout shows the access-denied panel, the page renders nothing).
+ */
+export async function requireSeller(next: string): Promise<SessionProfile | null> {
+  const session = await getSessionProfile();
+  if (!session) redirect(`/login?next=${encodeURIComponent(next)}`);
+  return session.role === "seller" ? session : null;
 }

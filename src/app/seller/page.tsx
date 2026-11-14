@@ -5,7 +5,7 @@ import Link from "next/link";
 import { DeleteListing } from "@/components/seller/delete-listing";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { getSessionProfile } from "@/lib/auth";
+import { requireSeller } from "@/lib/auth";
 import { getSellerListings } from "@/lib/catalog/queries";
 import { imageUrl } from "@/lib/images";
 import { formatPence } from "@/lib/money";
@@ -13,8 +13,9 @@ import { formatPence } from "@/lib/money";
 export const metadata: Metadata = { title: "Your listings" };
 
 export default async function SellerHome() {
-  const session = await getSessionProfile();
-  const listings = await getSellerListings(session!.id);
+  const session = await requireSeller("/seller");
+  if (!session) return null;
+  const listings = await getSellerListings(session.id);
 
   return (
     <div>

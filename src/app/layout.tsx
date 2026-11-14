@@ -50,7 +50,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const session = await getSessionProfile();
   return (
-    <html lang="en-GB" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en-GB" data-scroll-behavior="smooth" className={`${display.variable} ${sans.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <Providers>
           <a
