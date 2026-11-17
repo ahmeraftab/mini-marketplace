@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   clampQuantity,
+  compareAtForPercent,
   discountPercentFor,
   priceConfiguration,
 } from "../../src/lib/pricing";
@@ -225,5 +226,22 @@ describe("clampQuantity / discountPercentFor", () => {
     assert.equal(discountPercentFor(7500, 10000), 25);
     assert.equal(discountPercentFor(10000, 10000), null);
     assert.equal(discountPercentFor(10000, null), null);
+  });
+
+  it("turns a percentage off into a compare-at price that shows the same badge", () => {
+    assert.equal(compareAtForPercent(26999, 50), 53998); // the brief's £269.99 / £539.98
+    assert.equal(compareAtForPercent(7500, 25), 10000);
+    for (const base of [26999, 1999, 12345, 99999]) {
+      for (let pct = 1; pct <= 95; pct++) {
+        const was = compareAtForPercent(base, pct)!;
+        assert.ok(was > base, `${pct}% on ${base} must be above the price`);
+        assert.equal(discountPercentFor(base, was), pct, `${pct}% on ${base} -> ${was}`);
+      }
+    }
+  });
+
+  it("refuses percentages that make no sense", () => {
+    for (const pct of [0, -5, 96, 100, 12.5, Number.NaN]) assert.equal(compareAtForPercent(26999, pct), null, String(pct));
+    assert.equal(compareAtForPercent(0, 50), null);
   });
 });

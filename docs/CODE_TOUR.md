@@ -35,3 +35,7 @@ Example: "Professional Assembly is free for King and Super King."
 2. Add a case to `tests/unit/pricing.test.ts` and run `npm test`.
 
 Checkout uses the same function, so the browser and the server cannot disagree.
+
+## Discounts
+
+The seller ticks **On sale** and types either a percentage or a compare-at ("was") price; each fills in the other (`compareAtForPercent()` in `src/lib/pricing.ts`). Only the two prices are stored, and the "% OFF" badge is always calculated from them (`discountPercentFor()`), so the badge cannot claim a discount the prices do not show.

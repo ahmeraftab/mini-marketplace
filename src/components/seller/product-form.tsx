@@ -6,10 +6,10 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { Badge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Field, Select, Textarea } from "@/components/ui/field";
+import { Field, Input, Select, Textarea } from "@/components/ui/field";
 import type { Facets } from "@/lib/catalog/types";
-import { discountPercentFor } from "@/lib/pricing";
-import { parsePounds } from "@/lib/money";
+import { compareAtForPercent, discountPercentFor } from "@/lib/pricing";
+import { parsePounds, penceToInput } from "@/lib/money";
 import { saveProduct } from "@/lib/seller/actions";
 import { buildPayload, submissionProblems, type FormState } from "@/lib/seller/form-state";
 import { AiDescribe } from "./ai-describe";
@@ -73,6 +73,57 @@ export function ProductForm({
   const base = parsePounds(form.basePrice);
   const compare = form.compareAt.trim() ? parsePounds(form.compareAt) : null;
   const discount = base != null && compare != null ? discountPercentFor(base, compare) : null;
+
+  // Sale: the seller can type a percentage OR a compare-at price; each fills in the other.
+  // Only the two prices are saved, and the badge is always worked out from them.
+  const [onSale, setOnSale] = useState(initial.compareAt.trim() !== "");
+  const [percentText, setPercentText] = useState(() => {
+    const b = parsePounds(initial.basePrice);
+    const c = initial.compareAt.trim() ? parsePounds(initial.compareAt) : null;
+    const d = b != null && c != null ? discountPercentFor(b, c) : null;
+    return d != null ? String(d) : "";
+  });
+  const percentLeads = useRef(false); // true when the seller last typed the percentage
+  const percentValue = /^\d+$/.test(percentText.trim()) ? Number(percentText) : null;
+  const percentError =
+    onSale && percentText.trim() && (percentValue == null || percentValue < 1 || percentValue > 95)
+      ? "Use a whole number from 1 to 95"
+      : null;
+
+  const changePercent = (text: string) => {
+    setPercentText(text);
+    percentLeads.current = true;
+    const n = /^\d+$/.test(text.trim()) ? Number(text) : null;
+    const was = base != null && n != null ? compareAtForPercent(base, n) : null;
+    set({ compareAt: was != null ? penceToInput(was) : "" });
+  };
+  const changeCompare = (text: string) => {
+    percentLeads.current = false;
+    set({ compareAt: text });
+    const c = text.trim() ? parsePounds(text) : null;
+    const d = base != null && c != null ? discountPercentFor(base, c) : null;
+    setPercentText(d != null ? String(d) : "");
+  };
+  const changeBase = (text: string) => {
+    const b = parsePounds(text);
+    const patch: Partial<FormState> = { basePrice: text };
+    if (onSale && percentLeads.current && b != null && percentValue != null) {
+      // "50% off" stays 50% off when the price changes
+      const was = compareAtForPercent(b, percentValue);
+      if (was != null) patch.compareAt = penceToInput(was);
+    } else if (onSale) {
+      const d = b != null && compare != null ? discountPercentFor(b, compare) : null;
+      setPercentText(d != null ? String(d) : "");
+    }
+    set(patch);
+  };
+  const toggleSale = (on: boolean) => {
+    setOnSale(on);
+    if (!on) {
+      setPercentText("");
+      set({ compareAt: "" });
+    }
+  };
 
   const leaf = useMemo(() => {
     const children = categories.filter((c) => c.parentId);
@@ -157,14 +208,52 @@ export function ProductForm({
             )}
           </Field>
           <Field label="Price" hint="Starting price, before sizes and extras." error={err("basePrice")} required>
-            {(a) => <MoneyInput value={form.basePrice} placeholder="269.99" onChange={(e) => set({ basePrice: e.target.value })} {...a} />}
+            {(a) => <MoneyInput value={form.basePrice} placeholder="269.99" onChange={(e) => changeBase(e.target.value)} {...a} />}
           </Field>
-          <Field label="Compare-at price" hint="Optional. Shown crossed out." error={err("compareAt")}>
-            {(a) => <MoneyInput value={form.compareAt} placeholder="539.98" onChange={(e) => set({ compareAt: e.target.value })} {...a} />}
-          </Field>
-          {discount != null && (
-            <p className="flex items-center gap-2 text-sm text-ink-muted sm:col-span-2">
+          <label className="flex min-h-11 cursor-pointer items-center gap-3 self-end text-[15px]">
+            <input
+              type="checkbox"
+              checked={onSale}
+              onChange={(e) => toggleSale(e.target.checked)}
+              className="size-5 accent-[var(--color-ink)]"
+              data-testid="on-sale"
+            />
+            On sale (show a crossed-out price and a % OFF badge)
+          </label>
+          {onSale && (
+            <>
+              <Field label="Discount" hint="Whole per cent, 1 to 95. Fills in the compare-at price." error={percentError ?? undefined}>
+                {(a) => (
+                  <div className="relative">
+                    <Input
+                      {...a}
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      value={percentText}
+                      placeholder="50"
+                      maxLength={2}
+                      onChange={(e) => changePercent(e.target.value.replace(/[^0-9]/g, ""))}
+                      className="pr-10"
+                      data-testid="percent-off"
+                    />
+                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-muted" aria-hidden="true">%</span>
+                  </div>
+                )}
+              </Field>
+              <Field label="Compare-at price" hint="The crossed-out price. Or type it and the per cent follows." error={err("compareAt")}>
+                {(a) => <MoneyInput value={form.compareAt} placeholder="539.98" onChange={(e) => changeCompare(e.target.value)} {...a} />}
+              </Field>
+            </>
+          )}
+          {onSale && discount != null && (
+            <p className="flex items-center gap-2 text-sm text-ink-muted sm:col-span-2" data-testid="discount-preview">
               Buyers will see <Badge tone="clay">{discount}% OFF</Badge> next to the price.
+            </p>
+          )}
+          {onSale && discount == null && !percentError && (
+            <p className="text-sm text-ink-muted sm:col-span-2">
+              {base == null ? "Enter the price first, then the discount." : "Enter a discount or a compare-at price above the price."}
             </p>
           )}
           <Field label="Description" error={err("description")} className="sm:col-span-2" hint="A few sentences. Mention what makes it good.">

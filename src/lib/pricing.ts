@@ -75,6 +75,19 @@ export function clampQuantity(quantity: number): number {
   return Math.min(MAX_QUANTITY, Math.max(1, Math.trunc(quantity)));
 }
 
+/**
+ * The compare-at ("was") price that gives a whole-number percentage off the
+ * base price, so a seller can type "50" instead of working out £539.98.
+ * Returns null for anything outside 1 to 95 per cent. The badge is still
+ * calculated from the two stored prices (discountPercentFor), so it always
+ * matches what the buyer is charged.
+ */
+export function compareAtForPercent(basePricePence: number, percentOff: number): number | null {
+  if (!Number.isInteger(basePricePence) || basePricePence <= 0) return null;
+  if (!Number.isInteger(percentOff) || percentOff < 1 || percentOff > 95) return null;
+  return Math.round((basePricePence * 100) / (100 - percentOff));
+}
+
 /** Headline discount for a listing, or null when there is no compare-at price. */
 export function discountPercentFor(
   basePricePence: number,
