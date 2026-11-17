@@ -1,6 +1,6 @@
 # Install the app on your phone
 
-The app is the same website installed to the home screen. No app store is involved. Use the live HTTPS link.
+The app is the same website installed to the home screen. No app store is involved. Use the live HTTPS link: **https://mini-marketplace-six.vercel.app**
 
 ## Android (Chrome)
 

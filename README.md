@@ -4,7 +4,8 @@ A small multi-vendor marketplace, built as a working slice. One seller lists a c
 
 Everything here is sample data. Checkout takes no payment.
 
-- **Live site:** _add the Vercel URL here_
+- **Live site:** https://mini-marketplace-six.vercel.app (install it on a phone: see `/install` or `docs/INSTALL_PWA.md`)
+- **Repository:** https://github.com/ahmeraftab/mini-marketplace
 - **Stack:** Next.js (App Router, TypeScript), Tailwind CSS, Supabase (Postgres, Auth, Storage, Realtime, row-level security), deployed on Vercel.
 
 ## Test logins (sample accounts)
