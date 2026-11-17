@@ -42,7 +42,7 @@ export function fixtureProduct(): ProductDetail {
   }));
 
   const images = colours.flatMap((colour) =>
-    Array.from({ length: 6 }, (_, n) => ({
+    Array.from({ length: 5 }, (_, n) => ({
       id: fixtureId(`image:${colour.name}:${n}`),
       colourId: colour.id,
       path: `/seed/${slugify(colour.name)}/${n + 1}.jpg`,

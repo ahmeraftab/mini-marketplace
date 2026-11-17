@@ -12,11 +12,11 @@ export function buildPraguePayload(opts: {
   newId: () => string;
   productId?: string;
   submit?: boolean;
-  /** photos per colour; defaults to 6 (the brief asks for at least 5) */
+  /** photos per colour; defaults to 5 (the brief asks for at least 5; 8 colours x 5 = 40, the listing limit) */
   imagesPerColour?: number;
 }): SaveProductPayload {
   const productId = opts.productId ?? opts.newId();
-  const perColour = opts.imagesPerColour ?? 6;
+  const perColour = opts.imagesPerColour ?? 5;
 
   const colours = PRAGUE.colours.map((c) => ({
     id: opts.newId(),

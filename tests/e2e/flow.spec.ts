@@ -35,7 +35,7 @@ test("buyer configures, orders; seller moves the status; buyer sees it", async (
   const buyer = await as(browser, "demo.buyer@example.com");
   const p = buyer.page;
   await p.goto(`${base}/products/prague-divan-bed-cream-naples`);
-  await p.getByRole("radio", { name: "Mink Naples" }).click();
+  await p.getByRole("radio", { name: "Charcoal Coniston" }).click();
   await p.getByRole("radio", { name: /King 5FT/ }).click();
   await p.getByRole("radio", { name: /2 Drawers Foot End/ }).click();
   await p.locator("label", { hasText: "Professional Assembly" }).click();
@@ -63,7 +63,7 @@ test("buyer configures, orders; seller moves the status; buyer sees it", async (
   const seller = await as(browser, "demo.seller@example.com");
   await seller.page.goto(`${base}/seller/orders`);
   await seller.page.getByTestId("seller-order").first().click();
-  await expect(seller.page.getByText("Mink Naples").first()).toBeVisible();
+  await expect(seller.page.getByText("Charcoal Coniston").first()).toBeVisible();
   for (const step of ["Confirmed", "Shipped", "Delivered"]) {
     await expect(seller.page.getByTestId("next-status")).toHaveText(`Mark as ${step}`);
     await seller.page.getByTestId("next-status").click();

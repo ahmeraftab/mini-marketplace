@@ -101,7 +101,7 @@ async function seedDemo() {
   // illustrations (or the owner's own photos under seed-assets/override/)
   if (!existsSync(path.join(process.cwd(), "seed-assets", "generated", slugify(PRAGUE.colours[0].name), "1.jpg"))) {
     console.log("rendering demo images...");
-    if (existsSync(path.join(process.cwd(), "seed-assets", "source", "src1.jpg"))) await buildPhotos();
+    if (existsSync(path.join(process.cwd(), "seed-assets", "source", "src2.jpg"))) await buildPhotos();
     else await buildImages();
   }
 

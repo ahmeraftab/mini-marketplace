@@ -1,5 +1,5 @@
 /**
- * Builds the six product views for each colour from real, freely licensed
+ * Builds the five product views for each colour from real, freely licensed
  * photos in seed-assets/source (see README for credits). Each colour gets its
  * own set in which only the upholstery changes colour.
  */
@@ -30,10 +30,6 @@ const VIEWS: View[] = [
     areas: [
       { points: [[0.27, 0.0], [0.62, 0.0], [0.62, 0.4], [0.27, 0.4]], keepSaturated: false },
     ],
-  },
-  {
-    file: "src1.jpg", crop: [0, 0.58, 1, 0.42], // upholstered wall panel behind the pillows
-    areas: [{ points: [[0, 0], [1, 0], [1, 0.56], [0.63, 0.57], [0.5, 0.62], [0.31, 0.57], [0, 0.58]], keepSaturated: false }],
   },
   {
     file: "src2.jpg", crop: [0.12, 0.27, 0.85, 0.28], // tufted headboard close-up

@@ -190,7 +190,7 @@ describe("listing lifecycle", () => {
          (select count(*)::int from public.product_addons  where product_id = $1) as addons`,
       [productA],
     );
-    assert.deepEqual(counts[0], { colours: 6, images: 36, groups: 4, options: 15, addons: 1 });
+    assert.deepEqual(counts[0], { colours: 8, images: 40, groups: 4, options: 15, addons: 1 });
 
     const positions = await sup<{ name: string }>(
       `select name from public.option_groups where product_id = $1 order by position`,
@@ -219,7 +219,7 @@ describe("listing lifecycle", () => {
     // shop approved -> visible, with children
     await run(user(ADMIN), `select public.admin_set_seller_status($1, 'approved')`, [SELLER_A]);
     assert.equal(await count(anon, "public.products"), 1);
-    assert.equal(await count(anon, "public.product_colours"), 6);
+    assert.equal(await count(anon, "public.product_colours"), 8);
     assert.equal(await count(anon, "public.option_values"), 15);
     assert.equal(await count(anon, "public.product_addons"), 1);
     assert.equal(await count(anon, "public.sellers"), 1);
@@ -363,14 +363,14 @@ describe("search and facets (all data-driven)", () => {
   it("filters by size, colour, category and price", async () => {
     assert.equal((await search({ sizes: ["King 5FT"] })).length, 2);
     assert.equal((await search({ sizes: ["Nonexistent 9FT"] })).length, 0);
-    assert.equal((await search({ colours: ["Mink Naples"] })).length, 2);
+    assert.equal((await search({ colours: ["Seal Grey Naples"] })).length, 2);
     assert.equal((await search({ colours: ["Purple"] })).length, 0);
     assert.equal((await search({ category: CATEGORY_PARENT })).length, 2, "parent category includes children");
     assert.equal((await search({ category: CATEGORY_CHILD })).length, 2);
     assert.equal((await search({ min: 30000 })).length, 0);
     assert.equal((await search({ max: 26999 })).length, 2);
     assert.equal((await search({ min: 26999, max: 26999 })).length, 2);
-    assert.equal((await search({ q: "prague", colours: ["Mink Naples"], sizes: ["Single 3FT"], max: 30000 })).length, 2);
+    assert.equal((await search({ q: "prague", colours: ["Seal Grey Naples"], sizes: ["Single 3FT"], max: 30000 })).length, 2);
   });
 
   it("does not leak a seller's own non-public listings into the shop", async () => {
@@ -387,7 +387,8 @@ describe("search and facets (all data-driven)", () => {
     );
     assert.equal(f.categories.length, 2);
     assert.deepEqual(f.colours.map((c) => c.name), [
-      "Cream Naples", "Mink Naples", "Mink Plush Velvet", "Pink Coniston", "Seal Grey Naples", "Silver Linoso",
+      "Black Plush Velvet", "Charcoal Coniston", "Cream Naples", "Pink Plush Velvet", "Seal Grey Naples", "Silver Linoso",
+      "Silver Plush Velvet", "Steel Plush Velvet",
     ]);
     assert.deepEqual(f.sizes, [
       "Small Single 2FT6", "Single 3FT", "Small Double 4FT", "Double 4FT6", "King 5FT", "Super King 6FT",

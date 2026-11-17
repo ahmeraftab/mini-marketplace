@@ -27,11 +27,13 @@ export const PRAGUE = {
 
   colours: [
     { name: "Cream Naples", hex: "#E8DFCF" },
+    { name: "Charcoal Coniston", hex: "#4A4B4E" },
+    { name: "Silver Plush Velvet", hex: "#C4C6C9" },
     { name: "Seal Grey Naples", hex: "#8C8F92" },
-    { name: "Mink Naples", hex: "#A39382" },
-    { name: "Silver Linoso", hex: "#C9CBCD" },
-    { name: "Pink Coniston", hex: "#E2B9BF" },
-    { name: "Mink Plush Velvet", hex: "#9A8778" },
+    { name: "Silver Linoso", hex: "#B7B9BC" },
+    { name: "Black Plush Velvet", hex: "#232325" },
+    { name: "Steel Plush Velvet", hex: "#5B6268" },
+    { name: "Pink Plush Velvet", hex: "#D8A7B1" },
   ],
 
   groups: [

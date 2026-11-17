@@ -14,7 +14,7 @@
 ## Simplified or incomplete
 
 - The basket lives on the device (localStorage). It is not synced between devices.
-- Demo photos are real Unsplash photos (credited in the README) cropped into six views and colour-graded per swatch, so the colour change is approximate, not the true fabric.
+- Demo photos are real Unsplash photos (credited in the README) cropped into five views and colour-graded per swatch, so the colour change is approximate, not the true fabric.
 - A new listing needs admin approval before buyers see it (assumed; see the plan's questions).
 - Photos of a deleted listing are removed with it; photos a seller removes while editing a listing stay in storage (no clean-up job).
 - Sign-up creates confirmed accounts without email checks (there are no emails in the demo), so a real launch needs email confirmation and rate limiting added.

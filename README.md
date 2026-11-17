@@ -99,11 +99,9 @@ Not done, on purpose: real payments, emails (including confirmation and password
 
 ## Image credits
 
-The demo bed pictures are cropped and colour-graded from four free Unsplash photos (Unsplash License, no attribution required; credited here anyway), one set of six per colour, built by `scripts/build-seed-photos.ts`:
+The demo bed pictures are cropped and recoloured from two free Unsplash photos (Unsplash License, no attribution required; credited here anyway), one set of five per colour, built by `scripts/build-seed-photos.ts`:
 
-- Sibeli Velázquez: https://unsplash.com/photos/1741308478100-85c440e1b4bf
 - Clay Banks: https://unsplash.com/photos/1757418254008-1647eb0afe04
 - mark champs: https://unsplash.com/photos/1566665797739-1674de7a421a
-- Bree Anne: https://unsplash.com/photos/1639690222445-595b0794bbd4
 
-Only the upholstery is recoloured (hand-marked areas per photo, light and stitching kept), so the swatch changes the bed while the room stays as photographed; it is a demo grade, not the real fabric. To use your own photos, put them in `seed-assets/override/<colour-slug>/1.jpg … 6.jpg` and run `npm run seed:reset`. `scripts/build-seed-images.ts` remains as a drawn-illustration fallback.
+Only the upholstery is recoloured (hand-marked areas per photo, light and stitching kept), so the swatch changes the bed while the room stays as photographed; it is a demo grade, not the real fabric. To use your own photos, put them in `seed-assets/override/<colour-slug>/1.jpg … 5.jpg` and run `npm run seed:reset`. `scripts/build-seed-images.ts` remains as a drawn-illustration fallback.
