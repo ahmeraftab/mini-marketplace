@@ -38,6 +38,9 @@ function landingPath(next: FormDataEntryValue | null, home: string): string {
 function friendlyAuthError(message: string): string {
   const m = message.toLowerCase();
   if (m.includes("invalid login")) return "That email and password do not match.";
+  if (m.includes("restricted") || m.includes("quota") || m.includes("fetch failed") || m.includes("service unavailable")) {
+    return "Accounts are unavailable right now because the shop's database is offline. Please try again later.";
+  }
   if (m.includes("already registered") || m.includes("already been registered")) {
     return "An account with this email already exists. Try logging in instead.";
   }

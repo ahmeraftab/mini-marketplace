@@ -38,7 +38,14 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
     ],
-    formats: ["image/avif", "image/webp"],
+    // Every size x format the optimiser makes is one more full download from
+    // Supabase Storage, which counts against its egress quota. Product photos
+    // never change in place (a new upload gets a new path), so: one modern
+    // format, a short list of widths, and keep the results for 31 days.
+    formats: ["image/webp"],
+    deviceSizes: [640, 828, 1080, 1600],
+    imageSizes: [96, 256, 384],
+    minimumCacheTTL: 2678400,
   },
   async headers() {
     return [

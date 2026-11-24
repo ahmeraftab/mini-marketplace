@@ -118,6 +118,7 @@ async function seedDemo() {
       const file = existsSync(override) ? override : generated;
       const { error } = await admin.storage.from("product-images").upload(mine[i].storage_path, readFileSync(file), {
         contentType: "image/jpeg",
+        cacheControl: "31536000", // a year: photo paths are never reused
         upsert: true,
       });
       if (error) throw new Error(`Upload failed for ${mine[i].storage_path}: ${error.message}`);
