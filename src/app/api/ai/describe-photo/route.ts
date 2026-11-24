@@ -26,6 +26,14 @@ Look at the photo and return JSON with:
 - altText: one plain sentence describing what the photo shows, for screen readers.
 Describe only what is visible. Do not invent sizes, materials, prices, brands or delivery promises.`;
 
+const FALLBACK_MODEL = "gemini-3.1-flash-lite";
+
+/** Google's "try again later" answers (and our own timeout), as opposed to a bad key or request. */
+function isOverloaded(e: unknown): boolean {
+  const m = e instanceof Error ? `${e.name} ${e.message}` : String(e);
+  return /(503|500|504)|UNAVAILABLE|overloaded|high demand|Timeout|aborted/i.test(m);
+}
+
 const fail = (message: string, status: number) => NextResponse.json({ ok: false, message }, { status });
 
 export async function POST(request: Request) {
@@ -74,23 +82,41 @@ export async function POST(request: Request) {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-3.5-flash-lite",
-      contents: [{ role: "user", parts: [{ text: PROMPT }, { inlineData: image }] }],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            description: { type: Type.STRING },
-            altText: { type: Type.STRING },
+    // Google sometimes answers "503 high demand" for a few minutes. Try the configured
+    // model, then a backup model, within the 30-second function limit.
+    const primary = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
+    const models = [primary, ...[FALLBACK_MODEL].filter((m) => m !== primary)];
+    const started = Date.now();
+    let response: Awaited<ReturnType<typeof ai.models.generateContent>> | null = null;
+    let lastError: unknown = null;
+    for (const model of models) {
+      const remaining = 26_000 - (Date.now() - started);
+      if (remaining < 4_000) break;
+      try {
+        response = await ai.models.generateContent({
+          model,
+          contents: [{ role: "user", parts: [{ text: PROMPT }, { inlineData: image }] }],
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.OBJECT,
+              properties: {
+                title: { type: Type.STRING },
+                description: { type: Type.STRING },
+                altText: { type: Type.STRING },
+              },
+              required: ["title", "description", "altText"],
+            },
+            abortSignal: AbortSignal.timeout(Math.min(15_000, remaining)),
           },
-          required: ["title", "description", "altText"],
-        },
-        abortSignal: AbortSignal.timeout(20_000),
-      },
-    });
+        });
+        break;
+      } catch (e) {
+        lastError = e;
+        if (!isOverloaded(e)) throw e; // only an overloaded or timed-out model is worth a second try
+      }
+    }
+    if (!response) throw lastError ?? new Error("no model answered");
     const text = response.text;
     if (!text) return fail("The AI helper returned nothing. Try again, or write these by hand.", 502);
     const json = resultSchema.safeParse(JSON.parse(text));
